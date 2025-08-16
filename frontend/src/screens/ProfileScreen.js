@@ -5,6 +5,7 @@ import './ProfileScreen.css';
 const ProfileScreen = () => {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
+  const [showQRCode, setShowQRCode] = useState(false);
   const [profile, setProfile] = useState({
     name: 'John Doe',
     email: 'john.doe@example.com',
@@ -46,6 +47,12 @@ const ProfileScreen = () => {
         interests: [...prev.interests, text.trim()]
       }));
     }
+  };
+
+  const generateUserQRCode = () => {
+    // Generate a unique user QR code based on user info
+    const userCode = `user_${profile.email}_${Date.now().toString(36)}`;
+    return userCode;
   };
 
   const removeInterest = (index) => {
@@ -164,6 +171,41 @@ const ProfileScreen = () => {
               </div>
             ))}
           </div>
+        </div>
+
+        {/* QR Code */}
+        <div className="section">
+          <div className="section-header">
+            <h3 className="section-title">My QR Code</h3>
+            <button 
+              className="qr-toggle-button"
+              onClick={() => setShowQRCode(!showQRCode)}
+            >
+              {showQRCode ? 'Hide' : 'Show'}
+            </button>
+          </div>
+          {showQRCode && (
+            <div className="qr-code-section">
+              <div className="user-qr-container">
+                <div className="user-qr-visual">
+                  <div className="qr-grid">
+                    {Array.from({ length: 225 }, (_, i) => (
+                      <div 
+                        key={i} 
+                        className={`qr-dot ${Math.random() > 0.4 ? 'filled' : ''}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div className="qr-info">
+                  <p><strong>Your unique code:</strong> {generateUserQRCode()}</p>
+                  <p className="qr-description">
+                    Others can scan this to add you as a contact or confirm meetups
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Settings */}
