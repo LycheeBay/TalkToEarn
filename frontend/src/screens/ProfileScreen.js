@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProfileScreen.css';
 
@@ -6,6 +6,7 @@ const ProfileScreen = () => {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [showQRCode, setShowQRCode] = useState(false);
+  const [userQRCodeUrl, setUserQRCodeUrl] = useState('');
   const [profile, setProfile] = useState({
     name: 'John Doe',
     email: 'john.doe@example.com',
@@ -49,11 +50,33 @@ const ProfileScreen = () => {
     }
   };
 
-  const generateUserQRCode = () => {
-    // Generate a unique user QR code based on user info
-    const userCode = `user_${profile.email}_${Date.now().toString(36)}`;
-    return userCode;
+  const generateUserQRCode = async () => {
+    try {
+      // Dynamic import to avoid build issues
+      const QRCode = await import('qrcode');
+      // Generate a unique user QR code based on user info
+      const userCode = `user_${profile.email}_${Date.now().toString(36)}`;
+      const qrCodeDataUrl = await QRCode.default.toDataURL(userCode, {
+        width: 200,
+        margin: 2,
+        color: {
+          dark: '#1a1a1a',
+          light: '#ffffff'
+        }
+      });
+      setUserQRCodeUrl(qrCodeDataUrl);
+      return userCode;
+    } catch (error) {
+      console.error('Error generating QR code:', error);
+      return '';
+    }
   };
+
+  useEffect(() => {
+    if (showQRCode && !userQRCodeUrl) {
+      generateUserQRCode();
+    }
+  }, [showQRCode]);
 
   const removeInterest = (index) => {
     setEditedProfile(prev => ({
@@ -188,17 +211,18 @@ const ProfileScreen = () => {
             <div className="qr-code-section">
               <div className="user-qr-container">
                 <div className="user-qr-visual">
-                  <div className="qr-grid">
-                    {Array.from({ length: 225 }, (_, i) => (
-                      <div 
-                        key={i} 
-                        className={`qr-dot ${Math.random() > 0.4 ? 'filled' : ''}`}
-                      />
-                    ))}
-                  </div>
+                  {userQRCodeUrl ? (
+                    <img 
+                      src={userQRCodeUrl} 
+                      alt="User QR Code" 
+                      className="qr-code-image"
+                    />
+                  ) : (
+                    <div className="qr-loading">Generating QR Code...</div>
+                  )}
                 </div>
                 <div className="qr-info">
-                  <p><strong>Your unique code:</strong> {generateUserQRCode()}</p>
+                  <p><strong>Your unique profile QR code</strong></p>
                   <p className="qr-description">
                     Others can scan this to add you as a contact or confirm meetups
                   </p>

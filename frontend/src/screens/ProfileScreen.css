@@ -344,23 +344,23 @@
   margin-bottom: 16px;
 }
 
-.qr-grid {
-  display: grid;
-  grid-template-columns: repeat(15, 1fr);
-  gap: 1px;
-  width: 150px;
-  height: 150px;
+.qr-code-image {
+  display: block;
+  width: 200px;
+  height: 200px;
+  border-radius: 8px;
 }
 
-.qr-dot {
-  width: 100%;
-  height: 100%;
-  background: white;
-  border-radius: 1px;
-}
-
-.qr-dot.filled {
-  background: #1a1a1a;
+.qr-loading {
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  border-radius: 8px;
+  color: #6b7280;
+  font-size: 14px;
 }
 
 .qr-info {
