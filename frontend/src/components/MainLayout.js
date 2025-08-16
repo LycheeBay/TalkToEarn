@@ -13,7 +13,7 @@ const MainLayout = () => {
 
   const getCurrentTab = () => {
     const path = location.pathname;
-    if (path.includes('/hangouts')) return 'hangouts';
+    if (path.includes('/bounties')) return 'bounties';
     if (path.includes('/bounty')) return 'bounty';
     if (path.includes('/people')) return 'people';
     if (path.includes('/profile')) return 'profile';
@@ -25,8 +25,8 @@ const MainLayout = () => {
       case 'home':
         navigate('/app');
         break;
-      case 'hangouts':
-        navigate('/app/hangouts');
+      case 'bounties':
+        navigate('/app/bounties');
         break;
       case 'bounty':
         navigate('/app/bounty');
@@ -49,7 +49,7 @@ const MainLayout = () => {
       <div className="main-content">
         <Routes>
           <Route path="/" element={<HomeScreen />} />
-          <Route path="/hangouts" element={<ViewHangoutsScreen />} />
+          <Route path="/bounties" element={<ViewHangoutsScreen />} />
           <Route path="/bounty" element={<BountyScreen />} />
           <Route path="/people" element={<FindPeopleScreen />} />
           <Route path="/profile" element={<ProfileScreen />} />
@@ -66,11 +66,11 @@ const MainLayout = () => {
         </button>
 
         <button
-          className={`nav-item ${currentTab === 'hangouts' ? 'active' : ''}`}
-          onClick={() => handleTabClick('hangouts')}
+          className={`nav-item ${currentTab === 'bounties' ? 'active' : ''}`}
+          onClick={() => handleTabClick('bounties')}
         >
-          <span className="nav-icon">📅</span>
-          <span className="nav-label">Hangouts</span>
+          <span className="nav-icon">�</span>
+          <span className="nav-label">View Bounties</span>
         </button>
 
         <button
@@ -78,7 +78,7 @@ const MainLayout = () => {
           onClick={() => handleTabClick('bounty')}
         >
           <span className="nav-icon">💰</span>
-          <span className="nav-label">Bounties</span>
+          <span className="nav-label">Post Bounty</span>
         </button>
 
         <button

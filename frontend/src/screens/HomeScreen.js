@@ -12,16 +12,21 @@ const HomeScreen = () => {
   const videoRef = useRef(null);
   const qrScannerRef = useRef(null);
 
-  const recentHangouts = [
-    { id: 1, title: 'Coffee Chat', time: '2 hours ago', participants: 3 },
-    { id: 2, title: 'Study Group', time: '1 day ago', participants: 5 },
-    { id: 3, title: 'Weekend Hike', time: '3 days ago', participants: 8 },
-  ];
+  // Get user's bounties from localStorage
+  const [userBounties, setUserBounties] = useState([]);
+  const [selectedBountyForQR, setSelectedBountyForQR] = useState(null);
+
+  useEffect(() => {
+    const currentUserEmail = 'john.doe@example.com'; // In real app, get from auth context
+    const allBounties = JSON.parse(localStorage.getItem('bounties') || '[]');
+    const ownedBounties = allBounties.filter(bounty => bounty.owner === currentUserEmail);
+    setUserBounties(ownedBounties);
+  }, []);
 
   const quickActions = [
     { id: 1, title: 'Find People', icon: '👥', route: '/app/people' },
-    { id: 2, title: 'View Hangouts', icon: '📅', route: '/app/hangouts' },
-    { id: 3, title: 'Post Bounty', icon: '💰', route: '/app/bounty' },
+    { id: 2, title: 'View Bounties', icon: '�', route: '/app/bounties' },
+    { id: 3, title: 'Post Bounty', icon: '➕', route: '/app/bounty' },
   ];
 
   const handleActionClick = (action) => {
@@ -30,15 +35,15 @@ const HomeScreen = () => {
     }
   };
 
-  const generateMeetupQR = async () => {
+  const generateBountyQR = async (bounty) => {
     try {
       // Dynamic import to avoid build issues
       const QRCode = await import('qrcode');
-      // Generate a unique meetup code based on timestamp and user
-      const meetupCode = `meetup_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      setCurrentMeetupCode(meetupCode);
+      // Generate bounty QR code with bounty data
+      const bountyCode = `bounty_${bounty.id}_${bounty.owner}_${Date.now()}`;
+      setCurrentMeetupCode(bountyCode);
       
-      const qrCodeDataUrl = await QRCode.default.toDataURL(meetupCode, {
+      const qrCodeDataUrl = await QRCode.default.toDataURL(bountyCode, {
         width: 250,
         margin: 2,
         color: {
@@ -47,16 +52,21 @@ const HomeScreen = () => {
         }
       });
       setMeetupQRUrl(qrCodeDataUrl);
-      return meetupCode;
+      return bountyCode;
     } catch (error) {
-      console.error('Error generating meetup QR code:', error);
+      console.error('Error generating bounty QR code:', error);
       return '';
     }
   };
 
-  const handleConfirmMeetup = () => {
+  const handleGenerateBountyQR = (bounty) => {
+    if (!bounty) {
+      alert('Please select a bounty first!');
+      return;
+    }
+    setSelectedBountyForQR(bounty);
     setShowMeetupQR(true);
-    generateMeetupQR();
+    generateBountyQR(bounty);
   };
 
   const handleScanMeetup = async () => {
@@ -67,6 +77,7 @@ const HomeScreen = () => {
     setShowMeetupQR(false);
     setMeetupQRUrl('');
     setCurrentMeetupCode('');
+    setSelectedBountyForQR(null);
   };
 
   const closeScanner = () => {
@@ -88,8 +99,12 @@ const HomeScreen = () => {
           videoRef.current,
           (result) => {
             setScanResult(result.data);
-            if (result.data.startsWith('meetup_') || result.data.startsWith('user_')) {
-              alert(`Successfully scanned: ${result.data}`);
+            if (result.data.startsWith('bounty_')) {
+              console.log('🎉 BOUNTY FULFILLED! Scanned bounty QR code:', result.data);
+              alert(`Bounty completed! QR code: ${result.data}`);
+              closeScanner();
+            } else if (result.data.startsWith('user_')) {
+              alert(`Successfully scanned user profile: ${result.data}`);
               closeScanner();
             }
           },
@@ -148,28 +163,47 @@ const HomeScreen = () => {
         </div>
 
         <div className="home-section">
-          <h2 className="section-title">Confirm Meetup</h2>
-          <div className="meetup-confirmation-area">
-            <div className="meetup-prompt">
-              <span className="meetup-icon">🤝</span>
-              <div className="meetup-text">
-                <h3>Met someone from the app?</h3>
-                <p>Generate or scan QR codes to confirm meetups</p>
-              </div>
-              <div className="meetup-buttons">
-                <button 
-                  className="meetup-cta-button generate-qr"
-                  onClick={handleConfirmMeetup}
-                >
-                  Generate QR
-                </button>
-                <button 
-                  className="meetup-cta-button scan-qr"
-                  onClick={handleScanMeetup}
-                >
-                  Scan QR
-                </button>
-              </div>
+          <h2 className="section-title">Bounty Management</h2>
+          <div className="bounty-management-area">
+            <div className="bounty-actions">
+              <h3>Generate QR for Your Bounties</h3>
+              {userBounties.length > 0 ? (
+                <div className="bounty-selector">
+                  <select 
+                    className="bounty-select"
+                    onChange={(e) => {
+                      const bounty = userBounties.find(b => b.id.toString() === e.target.value);
+                      setSelectedBountyForQR(bounty);
+                    }}
+                    value={selectedBountyForQR?.id || ''}
+                  >
+                    <option value="">Select a bounty...</option>
+                    {userBounties.map(bounty => (
+                      <option key={bounty.id} value={bounty.id}>
+                        {bounty.title} - {bounty.reward} ETH
+                      </option>
+                    ))}
+                  </select>
+                  <button 
+                    className="generate-bounty-qr-btn"
+                    onClick={() => handleGenerateBountyQR(selectedBountyForQR)}
+                    disabled={!selectedBountyForQR}
+                  >
+                    Generate QR
+                  </button>
+                </div>
+              ) : (
+                <p className="no-bounties">You don't have any active bounties. Create one to generate QR codes!</p>
+              )}
+            </div>
+            <div className="scan-section">
+              <h3>Scan Bounty QR Code</h3>
+              <button 
+                className="scan-qr-btn"
+                onClick={handleScanMeetup}
+              >
+                Scan QR Code
+              </button>
             </div>
           </div>
         </div>
@@ -194,19 +228,26 @@ const HomeScreen = () => {
         </div>
 
         <div className="home-section">
-          <h2 className="section-title">Recent Hangouts</h2>
-          {recentHangouts.map((hangout) => (
-            <div key={hangout.id} className="hangout-card">
-              <div className="hangout-info">
-                <h3 className="hangout-title">{hangout.title}</h3>
-                <p className="hangout-time">{hangout.time}</p>
+          <h2 className="section-title">My Active Bounties</h2>
+          {userBounties.length > 0 ? (
+            userBounties.map((bounty) => (
+              <div key={bounty.id} className="bounty-card-mini">
+                <div className="bounty-info">
+                  <h3 className="bounty-title">{bounty.title}</h3>
+                  <p className="bounty-reward">Reward: {bounty.reward} ETH</p>
+                  <p className="bounty-stake">Staked: {bounty.stakeAmount} ETH</p>
+                </div>
+                <div className="bounty-status">
+                  <span className="applicant-count">{bounty.applicants?.length || 0}</span>
+                  <span className="applicant-label">applicants</span>
+                </div>
               </div>
-              <div className="participants">
-                <span className="participant-count">{hangout.participants}</span>
-                <span className="participant-label">people</span>
-              </div>
+            ))
+          ) : (
+            <div className="no-bounties-placeholder">
+              <p>No active bounties. Create your first bounty to get started!</p>
             </div>
-          ))}
+          )}
         </div>
       </div>
 
@@ -215,7 +256,7 @@ const HomeScreen = () => {
         <div className="qr-modal-overlay" onClick={closeMeetupQR}>
           <div className="qr-modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="qr-modal-header">
-              <h3>Meetup Confirmation QR</h3>
+              <h3>Bounty QR Code</h3>
               <button className="close-button" onClick={closeMeetupQR}>×</button>
             </div>
             <div className="qr-code-container">
@@ -231,9 +272,11 @@ const HomeScreen = () => {
                 )}
               </div>
               <div className="qr-code-info">
-                <p><strong>Meetup Code:</strong> {currentMeetupCode}</p>
+                <p><strong>Bounty:</strong> {selectedBountyForQR?.title}</p>
+                <p><strong>Reward:</strong> {selectedBountyForQR?.reward} ETH</p>
+                <p><strong>QR Code:</strong> {currentMeetupCode}</p>
                 <p className="qr-instructions">
-                  Ask the other person to scan this QR code to confirm your meetup!
+                  Share this QR code with the applicant to confirm bounty completion!
                 </p>
               </div>
             </div>

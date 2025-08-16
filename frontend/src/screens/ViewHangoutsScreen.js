@@ -8,54 +8,15 @@ const ViewHangoutsScreen = () => {
 
   useEffect(() => {
     // Load bounties from localStorage
-    const storedHangouts = JSON.parse(localStorage.getItem('hangouts') || '[]');
-    setBounties(storedHangouts);
+    const storedBounties = JSON.parse(localStorage.getItem('bounties') || '[]');
+    setBounties(storedBounties);
   }, []);
 
-  const hangouts = [
-    {
-      id: 1,
-      title: 'Morning Coffee Chat',
-      description: 'Casual coffee meetup to start the day right',
-      date: 'Today, 9:00 AM',
-      location: 'Central Cafe',
-      participants: 5,
-      maxParticipants: 8,
-      category: 'Social',
-    },
-    {
-      id: 2,
-      title: 'Study Group - React Native',
-      description: 'Learning mobile app development together',
-      date: 'Tomorrow, 2:00 PM',
-      location: 'Library Room 301',
-      participants: 3,
-      maxParticipants: 6,
-      category: 'Study',
-    },
-    {
-      id: 3,
-      title: 'Weekend Hiking Adventure',
-      description: 'Explore the beautiful mountain trails',
-      date: 'Saturday, 7:00 AM',
-      location: 'Mountain Trail Park',
-      participants: 12,
-      maxParticipants: 15,
-      category: 'Sports',
-    },
-    {
-      id: 4,
-      title: 'Board Game Night',
-      description: 'Fun evening with classic and modern board games',
-      date: 'Friday, 7:00 PM',
-      location: 'Community Center',
-      participants: 8,
-      maxParticipants: 12,
-      category: 'Entertainment',
-    },
-  ];
+  // Remove all hangouts, only show bounties
+  // Remove all hangouts, only show bounties
+  const hangouts = [];
 
-  const filters = ['All', 'Social', 'Study', 'Sports', 'Entertainment', 'Bounties'];
+  const filters = ['All', 'Technical', 'Creative', 'Research', 'Other'];
 
   // Combine hangouts and bounties
   const allEvents = [...hangouts, ...bounties];
@@ -76,19 +37,34 @@ const ViewHangoutsScreen = () => {
     return { color: '#10b981', text: 'Open' };
   };
 
-  const handleJoinHangout = (hangoutId) => {
-    alert(`Joined hangout ${hangoutId}!`);
+  const handleApplyForBounty = (bountyId) => {
+    console.log('Applying for bounty:', bountyId);
+    // In a real app, this would make an API call to apply for the bounty
+    // For now, we'll just add the user to the applicants list
+    const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{"email": "user@example.com"}');
+    const updatedBounties = bounties.map(bounty => {
+      if (bounty.id === bountyId) {
+        const applicants = bounty.applicants || [];
+        if (!applicants.includes(currentUser.email)) {
+          return { ...bounty, applicants: [...applicants, currentUser.email] };
+        }
+      }
+      return bounty;
+    });
+    setBounties(updatedBounties);
+    localStorage.setItem('bounties', JSON.stringify(updatedBounties));
+    alert(`Applied for bounty: ${bounties.find(b => b.id === bountyId)?.title}!`);
   };
 
   return (
-    <div className="hangouts-container">
-      <div className="hangouts-content">
-        <div className="hangouts-header">
-          <h1 className="hangouts-title">Hangouts</h1>
+    <div className="bounties-container">
+      <div className="bounties-content">
+        <div className="bounties-header">
+          <h1 className="bounties-title">Available Bounties</h1>
           <input
             className="search-input"
             type="text"
-            placeholder="Search hangouts..."
+            placeholder="Search bounties..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -106,79 +82,83 @@ const ViewHangoutsScreen = () => {
           ))}
         </div>
 
-        <div className="hangouts-list">
-          {filteredHangouts.map((event) => {
-            const isBounty = event.type === 'bounty';
-            const status = isBounty ? 
-              { color: '#f59e0b', text: 'Bounty' } : 
-              getParticipationStatus(event.participants, event.maxParticipants);
+        <div className="bounties-list">
+          {filteredHangouts.map((bounty) => {
+            const applicantCount = bounty.applicants ? bounty.applicants.length : 0;
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{"email": "user@example.com"}');
+            const hasApplied = bounty.applicants && bounty.applicants.includes(currentUser.email);
+            const isOwner = bounty.owner === currentUser.email;
             
             return (
-              <div key={event.id} className={`hangout-card ${isBounty ? 'bounty-card' : ''}`}>
+              <div key={bounty.id} className="bounty-card">
                 <div className="card-header">
-                  <h3 className="hangout-title">{event.title}</h3>
+                  <h3 className="bounty-title">{bounty.title}</h3>
                   <span 
-                    className="status-badge" 
-                    style={{ backgroundColor: status.color + '20', color: status.color }}
+                    className="status-badge bounty-badge"
+                    style={{ backgroundColor: '#f59e0b20', color: '#f59e0b' }}
                   >
-                    {isBounty ? '💰 ' + status.text : status.text}
+                    💰 Bounty
                   </span>
                 </div>
                 
-                <p className="hangout-description">{event.description}</p>
+                <p className="bounty-description">{bounty.description}</p>
                 
-                {isBounty && event.reward && (
-                  <div className="bounty-reward">
-                    <span className="reward-label">Reward:</span>
-                    <span className="reward-value">{event.reward}</span>
-                  </div>
-                )}
-                
-                <div className="hangout-details">
-                  {event.date && (
-                    <div className="detail-row">
-                      <span className="detail-icon">📅</span>
-                      <span className="detail-text">{event.date}</span>
+                <div className="bounty-rewards">
+                  {bounty.reward && (
+                    <div className="reward-info">
+                      <span className="reward-label">Reward:</span>
+                      <span className="reward-value">{bounty.reward} ETH</span>
                     </div>
                   )}
-                  {event.deadline && (
+                  {bounty.stakeAmount && (
+                    <div className="stake-info">
+                      <span className="stake-label">Stake Required:</span>
+                      <span className="stake-value">{bounty.stakeAmount} ETH</span>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="bounty-details">
+                  {bounty.deadline && (
                     <div className="detail-row">
                       <span className="detail-icon">⏰</span>
                       <span className="detail-text">
-                        Deadline: {new Date(event.deadline).toLocaleDateString()}
+                        Deadline: {new Date(bounty.deadline).toLocaleDateString()}
                       </span>
                     </div>
                   )}
-                  {event.location && (
+                  {bounty.category && (
                     <div className="detail-row">
-                      <span className="detail-icon">📍</span>
-                      <span className="detail-text">{event.location}</span>
+                      <span className="detail-icon">🏷️</span>
+                      <span className="detail-text">{bounty.category}</span>
                     </div>
                   )}
-                  {!isBounty && (
+                  <div className="detail-row">
+                    <span className="detail-icon">👥</span>
+                    <span className="detail-text">{applicantCount} applicants</span>
+                  </div>
+                  {bounty.owner && (
                     <div className="detail-row">
-                      <span className="detail-icon">👥</span>
-                      <span className="detail-text">
-                        {event.participants}/{event.maxParticipants} people
-                      </span>
-                    </div>
-                  )}
-                  {isBounty && event.maxParticipants && (
-                    <div className="detail-row">
-                      <span className="detail-icon">👥</span>
-                      <span className="detail-text">
-                        Max {event.maxParticipants} participants
-                      </span>
+                      <span className="detail-icon">�</span>
+                      <span className="detail-text">Owner: {bounty.owner}</span>
                     </div>
                   )}
                 </div>
 
-                <button 
-                  className={`btn ${isBounty ? 'btn-bounty' : 'btn-primary'} join-button`}
-                  onClick={() => handleJoinHangout(event.id)}
-                >
-                  {isBounty ? 'Apply for Bounty' : 'Join Hangout'}
-                </button>
+                {!isOwner && (
+                  <button 
+                    className={`btn ${hasApplied ? 'btn-applied' : 'btn-bounty'} join-button`}
+                    onClick={() => !hasApplied && handleApplyForBounty(bounty.id)}
+                    disabled={hasApplied}
+                  >
+                    {hasApplied ? 'Applied ✓' : 'Apply for Bounty'}
+                  </button>
+                )}
+                {isOwner && (
+                  <div className="owner-badge">
+                    <span>🏠 Your Bounty</span>
+                  </div>
+                )}
               </div>
             );
           })}
@@ -186,8 +166,8 @@ const ViewHangoutsScreen = () => {
 
         {filteredHangouts.length === 0 && (
           <div className="empty-state">
-            <h3>No hangouts found</h3>
-            <p>Try adjusting your search or filters to find more hangouts.</p>
+            <h3>No bounties found</h3>
+            <p>Try posting a bounty or check back later for new opportunities.</p>
           </div>
         )}
       </div>

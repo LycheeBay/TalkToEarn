@@ -183,81 +183,139 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.meetup-confirmation-area {
+.bounty-management-area {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.bounty-actions h3,
+.scan-section h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 16px 0;
+}
+
+.bounty-selector {
+  display: flex;
+  gap: 12px;
+  align-items: center;
   margin-bottom: 24px;
 }
 
-.meetup-prompt {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  border-radius: 16px;
-  padding: 24px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  color: white;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-}
-
-.meetup-icon {
-  font-size: 48px;
-  flex-shrink: 0;
-}
-
-.meetup-text {
+.bounty-select {
   flex: 1;
-}
-
-.meetup-text h3 {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
-  color: white;
-}
-
-.meetup-text p {
+  padding: 12px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
   font-size: 14px;
-  margin: 0;
-  color: rgba(255, 255, 255, 0.9);
-}
-
-.meetup-buttons {
-  display: flex;
-  gap: 12px;
-  flex-shrink: 0;
-}
-
-.meetup-cta-button {
   background: white;
-  color: #059669;
+}
+
+.generate-bounty-qr-btn,
+.scan-qr-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
   padding: 12px 20px;
   font-weight: 600;
   font-size: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 100px;
 }
 
-.meetup-cta-button:hover {
-  background: #f9fafb;
+.generate-bounty-qr-btn:disabled {
+  background: #d1d5db;
+  cursor: not-allowed;
+}
+
+.generate-bounty-qr-btn:hover:not(:disabled),
+.scan-qr-btn:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.generate-qr {
+.no-bounties {
+  color: #6b7280;
+  font-style: italic;
+  margin: 0;
+}
+
+.scan-section {
+  border-top: 1px solid #e5e7eb;
+  padding-top: 24px;
+}
+
+.bounty-card-mini {
   background: white;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.bounty-card-mini:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.bounty-info {
+  flex: 1;
+}
+
+.bounty-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 4px 0;
+}
+
+.bounty-reward {
+  font-size: 14px;
   color: #059669;
+  font-weight: 600;
+  margin: 0 0 2px 0;
 }
 
-.scan-qr {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
+.bounty-stake {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
 }
 
-.scan-qr:hover {
-  background: rgba(255, 255, 255, 0.3);
+.bounty-status {
+  text-align: center;
+}
+
+.applicant-count {
+  font-size: 20px;
+  font-weight: bold;
+  color: #3b82f6;
+  display: block;
+}
+
+.applicant-label {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.no-bounties-placeholder {
+  text-align: center;
+  padding: 40px 20px;
+  color: #6b7280;
+}
+
+.no-bounties-placeholder p {
+  margin: 0;
+  font-style: italic;
 }
 
 /* QR Modal Styles */
@@ -428,12 +486,13 @@
     gap: 16px;
   }
   
-  .meetup-buttons {
+  .bounty-selector {
     flex-direction: column;
-    width: 100%;
+    align-items: stretch;
   }
   
-  .meetup-cta-button {
+  .generate-bounty-qr-btn,
+  .scan-qr-btn {
     width: 100%;
   }
 }

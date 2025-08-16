@@ -1,19 +1,19 @@
-.hangouts-container {
+.bounties-container {
   min-height: 100vh;
   background-color: #f8f9fa;
 }
 
-.hangouts-content {
+.bounties-content {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
 }
 
-.hangouts-header {
+.bounties-header {
   margin-bottom: 20px;
 }
 
-.hangouts-title {
+.bounties-title {
   font-size: 28px;
   font-weight: bold;
   color: #1a1a1a;
@@ -63,20 +63,21 @@
   background: #2563eb;
 }
 
-.hangouts-list {
+.bounties-list {
   display: grid;
   gap: 16px;
 }
 
-.hangout-card {
+.bounty-card {
   background: white;
   border-radius: 16px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.2s ease;
+  border-left: 4px solid #f59e0b;
 }
 
-.hangout-card:hover {
+.bounty-card:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px);
 }
@@ -89,12 +90,76 @@
   gap: 12px;
 }
 
-.hangout-title {
+.bounty-title {
   font-size: 18px;
   font-weight: 600;
   color: #1a1a1a;
   margin: 0;
   flex: 1;
+}
+
+.bounty-description {
+  color: #6b7280;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.bounty-rewards {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.reward-info, .stake-info {
+  background: #f8f9fa;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border-left: 3px solid #f59e0b;
+}
+
+.reward-label, .stake-label {
+  font-size: 12px;
+  color: #6b7280;
+  margin-right: 8px;
+}
+
+.reward-value, .stake-value {
+  font-weight: 600;
+  color: #f59e0b;
+}
+
+.bounty-details {
+  margin-bottom: 16px;
+}
+
+.owner-badge {
+  background: #e5f3ff;
+  color: #0066cc;
+  padding: 8px 12px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.btn-applied {
+  background-color: #10b981;
+  border-color: #10b981;
+  color: white;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.btn-bounty {
+  background-color: #f59e0b;
+  border-color: #f59e0b;
+  color: white;
+}
+
+.btn-bounty:hover {
+  background-color: #d97706;
+  border-color: #d97706;
 }
 
 .status-badge {
@@ -103,6 +168,11 @@
   font-size: 12px;
   font-weight: 500;
   white-space: nowrap;
+}
+
+.bounty-badge {
+  background-color: #f59e0b20;
+  color: #f59e0b;
 }
 
 .hangout-description {

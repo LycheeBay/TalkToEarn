@@ -8,6 +8,7 @@ const BountyScreen = () => {
     title: '',
     description: '',
     reward: '',
+    stakeAmount: '',
     category: 'general',
     deadline: '',
     location: '',
@@ -33,28 +34,44 @@ const BountyScreen = () => {
     e.preventDefault();
     
     // Basic validation
-    if (!formData.title.trim() || !formData.description.trim() || !formData.reward.trim()) {
-      alert('Please fill in all required fields (Title, Description, and Reward)');
+    if (!formData.title.trim() || !formData.description.trim() || !formData.reward.trim() || !formData.stakeAmount.trim()) {
+      alert('Please fill in all required fields (Title, Description, Reward, and Stake Amount)');
       return;
     }
 
-    // Create bounty object
+    // Validate that stake amount is a positive number
+    const stakeAmount = parseFloat(formData.stakeAmount);
+    const rewardAmount = parseFloat(formData.reward);
+    
+    if (isNaN(stakeAmount) || stakeAmount <= 0) {
+      alert('Stake amount must be a positive number');
+      return;
+    }
+    
+    if (isNaN(rewardAmount) || rewardAmount <= 0) {
+      alert('Reward amount must be a positive number');
+      return;
+    }
+
+    // Create bounty object with ownership
+    const currentUserEmail = 'john.doe@example.com'; // In real app, get from auth context
     const newBounty = {
       id: Date.now(),
       ...formData,
+      owner: currentUserEmail,
+      applicants: [],
       createdAt: new Date().toISOString(),
       status: 'active',
-      participants: 0,
       type: 'bounty'
     };
 
-    // Store in localStorage for now (in a real app, this would be an API call)
-    const existingHangouts = JSON.parse(localStorage.getItem('hangouts') || '[]');
-    const updatedHangouts = [newBounty, ...existingHangouts];
-    localStorage.setItem('hangouts', JSON.stringify(updatedHangouts));
+    // Store in bounties localStorage
+    const existingBounties = JSON.parse(localStorage.getItem('bounties') || '[]');
+    const updatedBounties = [newBounty, ...existingBounties];
+    localStorage.setItem('bounties', JSON.stringify(updatedBounties));
 
-    alert('Bounty posted successfully!');
-    navigate('/app/hangouts');
+    alert(`Bounty posted successfully! ${stakeAmount} ETH has been staked.`);
+    navigate('/app/bounties');
   };
 
   const handleCancel = () => {
@@ -99,17 +116,36 @@ const BountyScreen = () => {
           <div className="form-row">
             <div className="form-group">
               <label className="form-label">
-                Reward <span className="required">*</span>
+                Reward (ETH) <span className="required">*</span>
               </label>
               <input
-                type="text"
+                type="number"
+                step="0.001"
+                min="0"
                 className="form-input"
-                placeholder="e.g., $50, Free lunch, Gift card"
+                placeholder="e.g., 0.1"
                 value={formData.reward}
                 onChange={(e) => handleInputChange('reward', e.target.value)}
               />
             </div>
 
+            <div className="form-group">
+              <label className="form-label">
+                Stake Amount (ETH) <span className="required">*</span>
+              </label>
+              <input
+                type="number"
+                step="0.001"
+                min="0"
+                className="form-input"
+                placeholder="e.g., 0.05"
+                value={formData.stakeAmount}
+                onChange={(e) => handleInputChange('stakeAmount', e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="form-row">
             <div className="form-group">
               <label className="form-label">Category</label>
               <select
@@ -124,18 +160,6 @@ const BountyScreen = () => {
                 ))}
               </select>
             </div>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label className="form-label">Deadline</label>
-              <input
-                type="datetime-local"
-                className="form-input"
-                value={formData.deadline}
-                onChange={(e) => handleInputChange('deadline', e.target.value)}
-              />
-            </div>
 
             <div className="form-group">
               <label className="form-label">Max Participants</label>
@@ -149,6 +173,16 @@ const BountyScreen = () => {
                 onChange={(e) => handleInputChange('maxParticipants', e.target.value)}
               />
             </div>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Deadline</label>
+            <input
+              type="datetime-local"
+              className="form-input"
+              value={formData.deadline}
+              onChange={(e) => handleInputChange('deadline', e.target.value)}
+            />
           </div>
 
           <div className="form-group">
