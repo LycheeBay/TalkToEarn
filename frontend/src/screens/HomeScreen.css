@@ -127,9 +127,65 @@
   color: #6b7280;
 }
 
+.bounty-posting-area {
+  margin-bottom: 24px;
+}
+
+.bounty-prompt {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  border-radius: 16px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
+.bounty-icon {
+  font-size: 48px;
+  flex-shrink: 0;
+}
+
+.bounty-text {
+  flex: 1;
+}
+
+.bounty-text h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: white;
+}
+
+.bounty-text p {
+  font-size: 14px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.bounty-cta-button {
+  background: white;
+  color: #f59e0b;
+  border: none;
+  border-radius: 12px;
+  padding: 12px 24px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.bounty-cta-button:hover {
+  background: #f9fafb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 @media (max-width: 768px) {
   .actions-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
   
   .action-card {
@@ -138,5 +194,15 @@
   
   .action-title {
     font-size: 11px;
+  }
+  
+  .bounty-prompt {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+  
+  .bounty-cta-button {
+    width: 100%;
   }
 }

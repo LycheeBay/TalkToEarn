@@ -154,6 +154,47 @@
   margin: 0;
 }
 
+.bounty-card {
+  border-left: 4px solid #f59e0b;
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+}
+
+.bounty-reward {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  background: rgba(245, 158, 11, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.reward-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #92400e;
+}
+
+.reward-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #f59e0b;
+}
+
+.btn-bounty {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  color: white;
+  border: none;
+  font-weight: 600;
+}
+
+.btn-bounty:hover {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+}
+
 @media (min-width: 768px) {
   .hangouts-list {
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));

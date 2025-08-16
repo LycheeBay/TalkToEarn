@@ -15,6 +15,7 @@ const HomeScreen = () => {
     { id: 1, title: 'Find People', icon: '👥', route: '/app/people' },
     { id: 2, title: 'View Hangouts', icon: '📅', route: '/app/hangouts' },
     { id: 3, title: 'Create Hangout', icon: '➕', action: 'create' },
+    { id: 4, title: 'Post Bounty', icon: '💰', route: '/app/bounty' },
   ];
 
   const handleActionClick = (action) => {
@@ -46,6 +47,25 @@ const HomeScreen = () => {
                 <span className="action-title">{action.title}</span>
               </button>
             ))}
+          </div>
+        </div>
+
+        <div className="home-section">
+          <h2 className="section-title">Post a Bounty</h2>
+          <div className="bounty-posting-area">
+            <div className="bounty-prompt">
+              <span className="bounty-icon">💰</span>
+              <div className="bounty-text">
+                <h3>Need help with something?</h3>
+                <p>Post a bounty and offer rewards for assistance</p>
+              </div>
+              <button 
+                className="bounty-cta-button"
+                onClick={() => navigate('/app/bounty')}
+              >
+                Post Bounty
+              </button>
+            </div>
           </div>
         </div>
 

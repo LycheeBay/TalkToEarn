@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ViewHangoutsScreen.css';
 
 const ViewHangoutsScreen = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
+  const [bounties, setBounties] = useState([]);
+
+  useEffect(() => {
+    // Load bounties from localStorage
+    const storedHangouts = JSON.parse(localStorage.getItem('hangouts') || '[]');
+    setBounties(storedHangouts);
+  }, []);
 
   const hangouts = [
     {
@@ -48,12 +55,17 @@ const ViewHangoutsScreen = () => {
     },
   ];
 
-  const filters = ['All', 'Social', 'Study', 'Sports', 'Entertainment'];
+  const filters = ['All', 'Social', 'Study', 'Sports', 'Entertainment', 'Bounties'];
 
-  const filteredHangouts = hangouts.filter(hangout => {
-    const matchesSearch = hangout.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         hangout.description.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesFilter = activeFilter === 'All' || hangout.category === activeFilter;
+  // Combine hangouts and bounties
+  const allEvents = [...hangouts, ...bounties];
+
+  const filteredHangouts = allEvents.filter(event => {
+    const matchesSearch = event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         event.description.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesFilter = activeFilter === 'All' || 
+                         event.category === activeFilter ||
+                         (activeFilter === 'Bounties' && event.type === 'bounty');
     return matchesSearch && matchesFilter;
   });
 
@@ -95,44 +107,77 @@ const ViewHangoutsScreen = () => {
         </div>
 
         <div className="hangouts-list">
-          {filteredHangouts.map((hangout) => {
-            const status = getParticipationStatus(hangout.participants, hangout.maxParticipants);
+          {filteredHangouts.map((event) => {
+            const isBounty = event.type === 'bounty';
+            const status = isBounty ? 
+              { color: '#f59e0b', text: 'Bounty' } : 
+              getParticipationStatus(event.participants, event.maxParticipants);
+            
             return (
-              <div key={hangout.id} className="hangout-card">
+              <div key={event.id} className={`hangout-card ${isBounty ? 'bounty-card' : ''}`}>
                 <div className="card-header">
-                  <h3 className="hangout-title">{hangout.title}</h3>
+                  <h3 className="hangout-title">{event.title}</h3>
                   <span 
                     className="status-badge" 
                     style={{ backgroundColor: status.color + '20', color: status.color }}
                   >
-                    {status.text}
+                    {isBounty ? '💰 ' + status.text : status.text}
                   </span>
                 </div>
                 
-                <p className="hangout-description">{hangout.description}</p>
+                <p className="hangout-description">{event.description}</p>
+                
+                {isBounty && event.reward && (
+                  <div className="bounty-reward">
+                    <span className="reward-label">Reward:</span>
+                    <span className="reward-value">{event.reward}</span>
+                  </div>
+                )}
                 
                 <div className="hangout-details">
-                  <div className="detail-row">
-                    <span className="detail-icon">📅</span>
-                    <span className="detail-text">{hangout.date}</span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="detail-icon">📍</span>
-                    <span className="detail-text">{hangout.location}</span>
-                  </div>
-                  <div className="detail-row">
-                    <span className="detail-icon">👥</span>
-                    <span className="detail-text">
-                      {hangout.participants}/{hangout.maxParticipants} people
-                    </span>
-                  </div>
+                  {event.date && (
+                    <div className="detail-row">
+                      <span className="detail-icon">📅</span>
+                      <span className="detail-text">{event.date}</span>
+                    </div>
+                  )}
+                  {event.deadline && (
+                    <div className="detail-row">
+                      <span className="detail-icon">⏰</span>
+                      <span className="detail-text">
+                        Deadline: {new Date(event.deadline).toLocaleDateString()}
+                      </span>
+                    </div>
+                  )}
+                  {event.location && (
+                    <div className="detail-row">
+                      <span className="detail-icon">📍</span>
+                      <span className="detail-text">{event.location}</span>
+                    </div>
+                  )}
+                  {!isBounty && (
+                    <div className="detail-row">
+                      <span className="detail-icon">👥</span>
+                      <span className="detail-text">
+                        {event.participants}/{event.maxParticipants} people
+                      </span>
+                    </div>
+                  )}
+                  {isBounty && event.maxParticipants && (
+                    <div className="detail-row">
+                      <span className="detail-icon">👥</span>
+                      <span className="detail-text">
+                        Max {event.maxParticipants} participants
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <button 
-                  className="btn btn-primary join-button"
-                  onClick={() => handleJoinHangout(hangout.id)}
+                  className={`btn ${isBounty ? 'btn-bounty' : 'btn-primary'} join-button`}
+                  onClick={() => handleJoinHangout(event.id)}
                 >
-                  Join Hangout
+                  {isBounty ? 'Apply for Bounty' : 'Join Hangout'}
                 </button>
               </div>
             );

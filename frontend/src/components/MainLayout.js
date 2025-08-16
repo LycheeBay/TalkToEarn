@@ -4,6 +4,7 @@ import HomeScreen from '../screens/HomeScreen';
 import ViewHangoutsScreen from '../screens/ViewHangoutsScreen';
 import FindPeopleScreen from '../screens/FindPeopleScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import BountyScreen from '../screens/BountyScreen';
 import './MainLayout.css';
 
 const MainLayout = () => {
@@ -13,6 +14,7 @@ const MainLayout = () => {
   const getCurrentTab = () => {
     const path = location.pathname;
     if (path.includes('/hangouts')) return 'hangouts';
+    if (path.includes('/bounty')) return 'bounty';
     if (path.includes('/people')) return 'people';
     if (path.includes('/profile')) return 'profile';
     return 'home';
@@ -25,6 +27,9 @@ const MainLayout = () => {
         break;
       case 'hangouts':
         navigate('/app/hangouts');
+        break;
+      case 'bounty':
+        navigate('/app/bounty');
         break;
       case 'people':
         navigate('/app/people');
@@ -45,6 +50,7 @@ const MainLayout = () => {
         <Routes>
           <Route path="/" element={<HomeScreen />} />
           <Route path="/hangouts" element={<ViewHangoutsScreen />} />
+          <Route path="/bounty" element={<BountyScreen />} />
           <Route path="/people" element={<FindPeopleScreen />} />
           <Route path="/profile" element={<ProfileScreen />} />
         </Routes>
@@ -65,6 +71,14 @@ const MainLayout = () => {
         >
           <span className="nav-icon">📅</span>
           <span className="nav-label">Hangouts</span>
+        </button>
+
+        <button
+          className={`nav-item ${currentTab === 'bounty' ? 'active' : ''}`}
+          onClick={() => handleTabClick('bounty')}
+        >
+          <span className="nav-icon">💰</span>
+          <span className="nav-label">Bounties</span>
         </button>
 
         <button
