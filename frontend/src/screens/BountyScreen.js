@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './BountyScreen.css';
 
-const BountyScreen = () => {
+const BountyScreen = ({ contract }) => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     title: '',
@@ -26,11 +26,11 @@ const BountyScreen = () => {
     { value: 'business', label: 'Business & Networking' },
   ];
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange =  (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     // Basic validation
@@ -69,6 +69,10 @@ const BountyScreen = () => {
     const existingBounties = JSON.parse(localStorage.getItem('bounties') || '[]');
     const updatedBounties = [newBounty, ...existingBounties];
     localStorage.setItem('bounties', JSON.stringify(updatedBounties));
+    
+    const createTX = await contract.createBounty(formData.category, formData.description, 1, formData.reward);
+    await createTX.wait();
+    console.log(createTX);
 
     alert(`Bounty posted successfully! ${stakeAmount} ETH has been staked.`);
     navigate('/app/bounties');

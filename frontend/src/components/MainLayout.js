@@ -7,7 +7,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import BountyScreen from '../screens/BountyScreen';
 import './MainLayout.css';
 
-const MainLayout = () => {
+const MainLayout = ({ contract }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -50,7 +50,7 @@ const MainLayout = () => {
         <Routes>
           <Route path="/" element={<HomeScreen />} />
           <Route path="/bounties" element={<ViewHangoutsScreen />} />
-          <Route path="/bounty" element={<BountyScreen />} />
+          <Route path="/bounty" element={<BountyScreen contract={contract} />} />
           <Route path="/people" element={<FindPeopleScreen />} />
           <Route path="/profile" element={<ProfileScreen />} />
         </Routes>
