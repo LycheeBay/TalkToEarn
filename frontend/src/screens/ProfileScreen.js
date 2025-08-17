@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './ProfileScreen.css';
 
-const ProfileScreen = () => {
+const ProfileScreen = ({ ethAddress }) => {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [showQRCode, setShowQRCode] = useState(false);
@@ -125,7 +125,7 @@ const ProfileScreen = () => {
               placeholder="Your name"
             />
           ) : (
-            <h2 className="name">{profile.name}</h2>
+            <h2 className="name">{ethAddress}</h2>
           )}
           
           <p className="email">{profile.email}</p>

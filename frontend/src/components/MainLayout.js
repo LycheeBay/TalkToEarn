@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import HomeScreen from '../screens/HomeScreen';
 import ViewHangoutsScreen from '../screens/ViewHangoutsScreen';
@@ -7,10 +7,14 @@ import ProfileScreen from '../screens/ProfileScreen';
 import BountyScreen from '../screens/BountyScreen';
 import './MainLayout.css';
 
-const MainLayout = ({ contract }) => {
+const MainLayout = ({ contract, ethAddress }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  useEffect(() => {
+    if (!ethAddress) navigate('/login');
+  }, [])
+  
   const getCurrentTab = () => {
     const path = location.pathname;
     if (path.includes('/bounties')) return 'bounties';
@@ -52,7 +56,7 @@ const MainLayout = ({ contract }) => {
           <Route path="/bounties" element={<ViewHangoutsScreen />} />
           <Route path="/bounty" element={<BountyScreen contract={contract} />} />
           <Route path="/people" element={<FindPeopleScreen />} />
-          <Route path="/profile" element={<ProfileScreen />} />
+          <Route path="/profile" element={<ProfileScreen ethAddress={ethAddress} />} />
         </Routes>
       </div>
 

@@ -5,7 +5,8 @@ import { ethers } from 'ethers';
 
 import TalkToEarn from "../artifacts/contracts/TalkToEarn.sol/TalkToEarn.json";
 
-const TALKTOEARN_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+// const TALKTOEARN_ADDRESS = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+const TALKTOEARN_ADDRESS = "0x957c6768d90afE4c251adE17F5074CCea3fF448B";
 
 const LoginScreen = ({ setETHAddress, setUserSigner, setContract }) => {
   const [email, setEmail] = useState('');

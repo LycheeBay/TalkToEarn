@@ -12,7 +12,7 @@ module.exports = {
     },
   },
   paths: {
-    artifacts: '../react/src/artifacts',
-    cache: '../react/src/cache',
+    artifacts: '../frontend/src/artifacts',
+    cache: '../frontend/src/cache',
   }
 };
