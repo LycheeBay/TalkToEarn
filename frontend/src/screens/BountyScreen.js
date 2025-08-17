@@ -65,14 +65,14 @@ const BountyScreen = ({ contract }) => {
       type: 'bounty'
     };
 
+    const createTX = await contract.createBounty(formData.category, formData.description, 1, formData.reward);
+    await createTX.wait();
+    console.log(createTX);
+
     // Store in bounties localStorage
     const existingBounties = JSON.parse(localStorage.getItem('bounties') || '[]');
     const updatedBounties = [newBounty, ...existingBounties];
     localStorage.setItem('bounties', JSON.stringify(updatedBounties));
-    
-    const createTX = await contract.createBounty(formData.category, formData.description, 1, formData.reward);
-    await createTX.wait();
-    console.log(createTX);
 
     alert(`Bounty posted successfully! ${stakeAmount} ETH has been staked.`);
     navigate('/app/bounties');
@@ -120,7 +120,7 @@ const BountyScreen = ({ contract }) => {
           <div className="form-row">
             <div className="form-group">
               <label className="form-label">
-                Reward (ETH) <span className="required">*</span>
+                Reward (FLOW) <span className="required">*</span>
               </label>
               <input
                 type="number"
@@ -135,7 +135,7 @@ const BountyScreen = ({ contract }) => {
 
             <div className="form-group">
               <label className="form-label">
-                Stake Amount (ETH) <span className="required">*</span>
+                Stake Amount (FLOW) <span className="required">*</span>
               </label>
               <input
                 type="number"

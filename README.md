@@ -8,6 +8,11 @@ ChatBounty is a social platform that bridges the digital and physical worlds by 
 
 In an increasingly digital world, authentic human connections are becoming rare. ChatBounty addresses this challenge by creating economic incentives for people to meet face-to-face, fostering genuine relationships and building stronger communities.
 
+## 🔗 Flow Integration
+
+- **Smart Contracts Deployed To Flow EVM Testnet:**  
+https://evm-testnet.flowscan.io/address/0x957c6768d90afE4c251adE17F5074CCea3fF448B
+
 ## 🚀 Key Features
 
 ### 🎯 Bounty System
