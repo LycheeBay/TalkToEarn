@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './ViewHangoutsScreen.css';
 
-const ViewHangoutsScreen = () => {
+const ViewHangoutsScreen = ({ contract }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('All');
   const [bounties, setBounties] = useState([]);
@@ -37,8 +37,11 @@ const ViewHangoutsScreen = () => {
     return { color: '#10b981', text: 'Open' };
   };
 
-  const handleApplyForBounty = (bountyId) => {
+  const handleApplyForBounty = async (bountyId) => {
     console.log('Applying for bounty:', bountyId);
+    const createTX = await contract.acceptBounty(1);
+    await createTX.wait();
+    console.log(createTX);
     // In a real app, this would make an API call to apply for the bounty
     // For now, we'll just add the user to the applicants list
     const currentUser = JSON.parse(localStorage.getItem('currentUser') || '{"email": "user@example.com"}');
@@ -107,13 +110,13 @@ const ViewHangoutsScreen = () => {
                   {bounty.reward && (
                     <div className="reward-info">
                       <span className="reward-label">Reward:</span>
-                      <span className="reward-value">{bounty.reward} ETH</span>
+                      <span className="reward-value">{bounty.reward} FLOW</span>
                     </div>
                   )}
                   {bounty.stakeAmount && (
                     <div className="stake-info">
                       <span className="stake-label">Stake Required:</span>
-                      <span className="stake-value">{bounty.stakeAmount} ETH</span>
+                      <span className="stake-value">{bounty.stakeAmount} FLOW</span>
                     </div>
                   )}
                 </div>
