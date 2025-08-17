@@ -2,8 +2,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './HomeScreen.css';
 
-const HomeScreen = () => {
+import { http } from 'viem'
+import { mainnet } from 'viem/chains'
+import { createEnsPublicClient } from '@ensdomains/ensjs'
+import { getRecords } from '@ensdomains/ensjs/public'
+
+
+const ClaimTip = () => {
   const navigate = useNavigate();
+  const [ens, setens] = useState("");
+  const [useradress, setuseradress] = useState("");
+  const [amount, setAmount] = useState(0);
   const [showMeetupQR, setShowMeetupQR] = useState(false);
   const [showScanner, setShowScanner] = useState(false);
   const [meetupQRUrl, setMeetupQRUrl] = useState('');
@@ -11,6 +20,11 @@ const HomeScreen = () => {
   const [currentMeetupCode, setCurrentMeetupCode] = useState('');
   const videoRef = useRef(null);
   const qrScannerRef = useRef(null);
+
+  const client = createEnsPublicClient({
+    chain: mainnet,
+    transport: http(),
+  })
 
   // Get user's bounties from localStorage
   const [userBounties, setUserBounties] = useState([]);
@@ -90,6 +104,22 @@ const HomeScreen = () => {
     setScanResult('');
   };
 
+  const getens = async () => {
+    const ethAddress = await client.getAddressRecord({ name: ens });
+    console.log(ethAddress);
+    setuseradress(ethAddress.value);
+
+    const records = await getRecords(client, {
+      name: ens,
+      records: {
+        texts: ['avatar', 'description', 'email', 'url', 'twitter', 'github'],
+        coins: ['ETH', 'BTC'],
+        contentHash: true
+      }
+    })
+    console.log(records);
+  }
+
   const startScanner = async () => {
     if (videoRef.current && !qrScannerRef.current) {
       try {
@@ -142,62 +172,14 @@ const HomeScreen = () => {
     <div className="home-container">
       <div className="home-content">
         <div className="home-header">
-          <h1 className="welcome-text">Welcome back!</h1>
-          <p className="home-subtitle">What would you like to do today?</p>
+          <h1 className="welcome-text">Tip Someone</h1>
+          <p className="home-subtitle">Send reward to someone </p>
         </div>
 
         <div className="home-section">
-          <h2 className="section-title">Quick Actions</h2>
-          <div className="actions-grid">
-            {quickActions.map((action) => (
-              <button
-                key={action.id}
-                className="action-card"
-                onClick={() => handleActionClick(action)}
-              >
-                <span className="action-icon">{action.icon}</span>
-                <span className="action-title">{action.title}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="home-section">
-          <h2 className="section-title">Bounty Management</h2>
           <div className="bounty-management-area">
-            <div className="bounty-actions">
-              <h3>Generate QR for Your Bounties</h3>
-              {userBounties.length > 0 ? (
-                <div className="bounty-selector">
-                  <select 
-                    className="bounty-select"
-                    onChange={(e) => {
-                      const bounty = userBounties.find(b => b.id.toString() === e.target.value);
-                      setSelectedBountyForQR(bounty);
-                    }}
-                    value={selectedBountyForQR?.id || ''}
-                  >
-                    <option value="">Select a bounty...</option>
-                    {userBounties.map(bounty => (
-                      <option key={bounty.id} value={bounty.id}>
-                        {bounty.title} - {bounty.reward} ETH
-                      </option>
-                    ))}
-                  </select>
-                  <button 
-                    className="generate-bounty-qr-btn"
-                    onClick={() => handleGenerateBountyQR(selectedBountyForQR)}
-                    disabled={!selectedBountyForQR}
-                  >
-                    Generate QR
-                  </button>
-                </div>
-              ) : (
-                <p className="no-bounties">You don't have any active bounties. Create one to generate QR codes!</p>
-              )}
-            </div>
-            <div className="scan-section">
-              <h3>Scan Bounty QR Code</h3>
+            <div>
+              <h3>Scan Wallet Address</h3>
               <button 
                 className="scan-qr-btn"
                 onClick={handleScanMeetup}
@@ -205,7 +187,50 @@ const HomeScreen = () => {
                 Scan QR Code
               </button>
             </div>
+            <div className="scan-section">
+              Or
+            </div>
+            <br />
+            <div className="form-group">
+              <label className="form-label">
+                Enter ENS <span className="required">*</span>
+              </label>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="test.eth"
+                value={ens}
+                onChange={(e) => setens(e.target.value)}
+              />
+              <button 
+                className="scan-qr-btn"
+                onClick={getens}
+              >
+                Check
+              </button>
+
+              <p>{useradress}</p>
+            </div>
+
+            {useradress && <div className="form-group">
+              <label className="form-label">
+                Enter Amount (FLOW)<span className="required">*</span>
+              </label>
+              <input
+                type="text"
+                className="form-input"
+                placeholder="0"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+              />
+              <button 
+                className="scan-qr-btn"
+              >
+                Send
+              </button>
+            </div>}
           </div>
+         
         </div>
 
         <div className="home-section">
@@ -234,8 +259,8 @@ const HomeScreen = () => {
               <div key={bounty.id} className="bounty-card-mini">
                 <div className="bounty-info">
                   <h3 className="bounty-title">{bounty.title}</h3>
-                  <p className="bounty-reward">Reward: {bounty.reward} FLOW</p>
-                  <p className="bounty-stake">Staked: {bounty.stakeAmount} FLOW</p>
+                  <p className="bounty-reward">Reward: {bounty.reward} ETH</p>
+                  <p className="bounty-stake">Staked: {bounty.stakeAmount} ETH</p>
                 </div>
                 <div className="bounty-status">
                   <span className="applicant-count">{bounty.applicants?.length || 0}</span>
@@ -315,4 +340,4 @@ const HomeScreen = () => {
   );
 };
 
-export default HomeScreen;
+export default ClaimTip;

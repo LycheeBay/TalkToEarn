@@ -5,6 +5,7 @@ import ViewHangoutsScreen from '../screens/ViewHangoutsScreen';
 import FindPeopleScreen from '../screens/FindPeopleScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import BountyScreen from '../screens/BountyScreen';
+import ClaimTip from '../screens/ClaimTip';
 import './MainLayout.css';
 
 const MainLayout = ({ contract, ethAddress }) => {
@@ -41,6 +42,9 @@ const MainLayout = ({ contract, ethAddress }) => {
       case 'profile':
         navigate('/app/profile');
         break;
+      case 'tip':
+        navigate('/app/tip');
+        break;
       default:
         navigate('/app');
     }
@@ -56,6 +60,7 @@ const MainLayout = ({ contract, ethAddress }) => {
           <Route path="/bounties" element={<ViewHangoutsScreen contract={contract} />} />
           <Route path="/bounty" element={<BountyScreen contract={contract} />} />
           <Route path="/people" element={<FindPeopleScreen />} />
+          <Route path="/tip" element={<ClaimTip />} />
           <Route path="/profile" element={<ProfileScreen ethAddress={ethAddress} />} />
         </Routes>
       </div>
@@ -91,6 +96,14 @@ const MainLayout = ({ contract, ethAddress }) => {
         >
           <span className="nav-icon">👥</span>
           <span className="nav-label">Find People</span>
+        </button>
+
+         <button
+          className={`nav-item ${currentTab === 'tip' ? 'active' : ''}`}
+          onClick={() => handleTabClick('tip')}
+        >
+          <span className="nav-icon">➤</span>
+          <span className="nav-label">Tip</span>
         </button>
 
         <button

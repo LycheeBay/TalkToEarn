@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ensdomains/ensjs": "^4.0.2",
+    "@privy-io/react-auth": "^2.21.3",
     "@types/qrcode": "^1.5.5",
     "@zxing/library": "^0.21.3",
     "ethers": "^6.15.0",
